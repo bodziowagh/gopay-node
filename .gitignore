@@ -3,6 +3,8 @@ node_modules/
 /dev
 src/**/*.js
 src/**/*.js.map
+test/**/*.js
+test/**/*.js.map
 
 .DS_Store
 *.swp

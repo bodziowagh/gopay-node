@@ -1,3 +1,5 @@
+"use strict"
+
 import "isomorphic-fetch"
 import * as process from "process"
 import * as decamelize from "decamelize"
@@ -23,6 +25,7 @@ export interface RestAPIOptions {
 }
 
 export interface ErrorResponse {
+    httpCode?: number
     status: string
     code: string
     errors: Array<{[key: string]: string}>
@@ -81,7 +84,7 @@ export class RestAPI {
         reject(err)
     }
 
-    public static getData (data: any): Array<string> {
+    public static getData (data: any): Array<any> {
         return partitionKeys(data, (k: string) => ["appId", "secret"].indexOf(k) !== -1)
     }
 
@@ -130,7 +133,7 @@ export class RestAPI {
 
     public longPolling<A> (promise: () => Promise<A>,
                            condition: (response: A) => boolean,
-                           callback: ResponseCallback<A>,
+                           callback?: ResponseCallback<A>,
                            interval: number = POLLING_INTERVAL,
                            timeout: number = POLLING_TIMEOUT): Promise<A> {
 

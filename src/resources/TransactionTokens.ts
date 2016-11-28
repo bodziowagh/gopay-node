@@ -1,5 +1,6 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
 import { CRUDResource } from "./CRUDResource"
+import { ProcessingMode } from "./common/ProcessingMode"
 
 /* Request */
 
@@ -50,11 +51,11 @@ export interface TransactionTokenQRScanDataItem {}
 export interface TransactionTokenItem {
     storeId: string
     token: string
-    active: boolean
-    testMode: boolean
+    mode: ProcessingMode
     subscription: boolean
     createdOn: number
     lastUsedOn: number
+    paymentType: string
     data: TransactionTokenCardDataItem |TransactionTokenQRScanDataItem
 }
 
@@ -64,22 +65,25 @@ export class TransactionTokens extends CRUDResource {
 
     public static requiredParams: Array<string> = ["paymentType", "subscription", "email", "amount", "currency", "data"]
 
-    public static routeBase: string = "/tokens"
+    public static routeBase: string = "/stores/:storeId/tokens"
 
     public create (data: TransactionTokenCreateParams,
                    callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
-        return this._createRoute(TransactionTokens.requiredParams)(data, callback)
+        return this.defineRoute("POST", "/tokens", TransactionTokens.requiredParams)(data, callback)
     }
 
     public get (storeId: string,
                 id: string,
                 data?: AuthParams,
                 callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken> {
-        return this.defineRoute("GET", "/stores/:storeId/tokens/:id")(data, callback, ["id", "storeId"], id, storeId)
+        return this._getRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
-    public delete (id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
-        return this._deleteRoute()(data, callback, ["id"], id)
+    public delete (storeId: string,
+                   id: string,
+                   data?: AuthParams,
+                   callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse> {
+        return this._deleteRoute()(data, callback, ["storeId", "id"], storeId, id)
     }
 
 }

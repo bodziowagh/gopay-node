@@ -1,8 +1,12 @@
 import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
 
 /* Request */
-export interface BankAccountsListParams extends CRUDPaginationParams, AuthParams {}
+export type BankAccountsSortBy = "createdOn"
+
+export interface BankAccountsListParams extends CRUDPaginationParams, CRUDSortingParams<BankAccountsSortBy>, AuthParams {
+    primary?: boolean
+}
 export interface BankAccountCreateParams extends AuthParams {
     accountNumber: string
     country: string
@@ -17,7 +21,7 @@ export interface BankAccountCreateParams extends AuthParams {
     routingCode?: string
 }
 export interface BankAccountUpdateParams extends AuthParams {
-    isPrimary?: boolean
+    primary?: boolean
     accountNumber?: string
     holderName?: string
     bankAddress?: string
@@ -44,11 +48,10 @@ export interface BankAccountItem {
     ifscCode?: string
     routingCode?: string
     lastFour: string
-    active: boolean
     status: string
     createdOn: number
-    updatedOn: number
-    primaryAccount: boolean
+    primary: boolean
+    accountNumber: string
 }
 
 export type ResponseBankAccount = BankAccountItem

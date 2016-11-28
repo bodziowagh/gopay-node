@@ -1,9 +1,11 @@
+"use strict"
+
 import "../utils"
 import { expect } from "chai"
 import sinon = require("sinon")
 import nock = require("nock")
-import { DEFAULT_ENDPOINT, ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
-import { RestAPI, RestAPIOptions, ErrorResponse } from "../../src/api/RestAPI"
+import { ENV_KEY_APP_ID, ENV_KEY_SECRET } from "../../src/constants"
+import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { BAD_REQUEST } from "../../src/errors/ErrorsConstants"
 import { Scope } from "nock"
 
@@ -12,6 +14,7 @@ describe("RestAPI", () => {
     let mockError: Scope
     const testEndpoint = "http://localhost:80"
     let scope: Scope
+    let sandbox: Sinon.SinonSandbox
 
     before(() => {
         const REPEATS = 100
@@ -25,9 +28,14 @@ describe("RestAPI", () => {
             .get("/error")
             .times(REPEATS)
             .reply(400, {}, { "Content-Type" : "application/json" })
+
+        sandbox = sinon.sandbox.create({
+            properties: ["spy", "clock"]
+        })
     })
 
     after(() => {
+        sandbox.restore()
         nock.cleanAll()
     })
 
@@ -79,7 +87,7 @@ describe("RestAPI", () => {
         ]
         let mock: Scope
 
-        const spy = sinon.spy(global, "fetch")
+        const spy = sandbox.spy(global, "fetch")
 
         return Promise.all(asserts.map((a: any, i: number) => {
             const api: RestAPI = new RestAPI(Object.assign({}, { endpoint : testEndpoint }, a[0]))
@@ -118,7 +126,7 @@ describe("RestAPI", () => {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
         const spy = sinon.spy()
-        const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error" }
+        const error: ErrorResponse = { code : BAD_REQUEST, errors : [], status : "error", httpCode : 400 }
 
         return api.send("GET", "/error", null, spy).should.eventually.be.rejected
             .then((e) => {
@@ -142,12 +150,30 @@ describe("RestAPI", () => {
     it("should return response with camel case properties names", function () {
         this.timeout(200)
         const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
-        const mock = nock(testEndpoint)
+        nock(testEndpoint)
             .get("/camel")
             .once()
             .reply(200, { "foo_bar" : true }, { "Content-Type" : "application/json" })
 
         return api.send("GET", "/camel").should.eventually.be.fulfilled
             .then((r: any) => expect(r).to.eql({ fooBar : true }))
+    })
+
+    it("should do long polling until condition is met", () => {
+        const api: RestAPI = new RestAPI({ endpoint : testEndpoint })
+        let repeats = 3
+
+        const promise: () => Promise<boolean> = () => new Promise((resolve: Function) => resolve(--repeats === 0))
+        const spy = sandbox.spy(promise)
+
+        const result = api.longPolling(
+            spy,
+            (result: boolean) => result === true,
+            null,
+            10
+        )
+
+        return expect(result).to.eventually.be.true
+            .then(() => expect(spy).to.have.been.calledThrice)
     })
 })

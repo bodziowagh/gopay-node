@@ -1,8 +1,17 @@
 import { ResponseCallback, AuthParams } from "../api/RestAPI"
-import { CRUDResource, CRUDPaginationParams, CRUDItemsResponse } from "./CRUDResource"
+import { CRUDResource, CRUDPaginationParams, CRUDSortingParams, CRUDItemsResponse } from "./CRUDResource"
+import { Metadata } from "./common/Metadata"
+
+export type TransferStatus = "pending" | "in_transfer" | "paid" | "cancelled" | "failed"
 
 /* Request */
-export interface TransfersListParams extends CRUDPaginationParams, AuthParams {}
+export type TransfersSortBy = "createdOn"
+
+export interface TransfersListParams extends CRUDPaginationParams, CRUDSortingParams<TransfersSortBy>, AuthParams {
+    currency?: string
+    status?: TransferStatus
+    startedBy?: string
+}
 
 /* Response */
 export interface TransferItem {
@@ -10,12 +19,13 @@ export interface TransferItem {
     bankAccountId: string
     amount: number
     currency: string
-    status: string
+    amountFormatted: number
+    status: TransferStatus
     errorCode?: string
     errorText?: string
-    metadata?: any
+    metadata?: Metadata
+    startedBy: string
     createdOn: number
-    updatedOn: number
 }
 
 export type ResponseTransfer = TransferItem

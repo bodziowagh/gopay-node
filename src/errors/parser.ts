@@ -27,18 +27,28 @@ function getCodeByStatus (status: number): string {
 export function fromError (error: Error): ErrorResponse {
     let errorResponse: any
 
-    if ((error instanceof PathParameterError) || error instanceof RequestParameterError) {
+    if (error instanceof PathParameterError) {
+        errorResponse = {
+            code : Code.REQUEST_ERROR,
+            errors : [{ [error.parameter] : "required" }]
+        }
+    } else if (error instanceof RequestParameterError) {
         errorResponse = {
             code : Code.VALIDATION_ERROR,
-            errors : [{[error.parameter]: "required"}]
+            errors : [{
+                field  : error.parameter,
+                reason : "REQUIRED_VALUE"
+            }]
         }
     } else if (error instanceof APIError) {
-        errorResponse = error.response ? error.response : { code : getCodeByStatus(error.status) }
+        errorResponse = Object.assign(
+            {}, error.response ? error.response : { code : getCodeByStatus(error.status) }, { httpCode : error.status }
+        )
     }
 
     return Object.assign({
-        code   : Code.UNKNOWN,
-        errors : [],
-        status : "error"
+        code     : Code.UNKNOWN,
+        errors   : [],
+        status   : "error"
     }, errorResponse)
 }
