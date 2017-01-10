@@ -38,6 +38,7 @@ export interface TransactionTokenCardDataItem {
     expYear: number
     lastFour: string
     brand: string
+    name?: string
     line1?: string
     line2?: string
     state?: string
@@ -47,16 +48,15 @@ export interface TransactionTokenCardDataItem {
 }
 export interface TransactionTokenQRScanDataItem {}
 
-
 export interface TransactionTokenItem {
+    id: string
     storeId: string
-    token: string
     mode: ProcessingMode
     subscription: boolean
     createdOn: number
     lastUsedOn: number
     paymentType: string
-    data: TransactionTokenCardDataItem |TransactionTokenQRScanDataItem
+    data: TransactionTokenCardDataItem | TransactionTokenQRScanDataItem
 }
 
 export type ResponseTransactionToken = TransactionTokenItem
