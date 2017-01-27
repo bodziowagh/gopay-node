@@ -1,10 +1,11 @@
 import "../utils"
 import { expect } from "chai"
 import * as sinon from "sinon"
-import nock = require("nock")
+import { SinonSandbox } from "sinon"
+import * as nock from "nock"
+import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { Charges } from "../../src/resources/Charges"
-import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 import { POLLING_INTERVAL } from "../../src/constants"
 
@@ -13,7 +14,7 @@ describe("Charges", () => {
     let charges: Charges
     let scope: Scope
     const testEndpoint = "http://localhost:80"
-    let sandbox: Sinon.SinonSandbox
+    let sandbox: SinonSandbox
 
     beforeEach(() => {
         api = new RestAPI({endpoint: testEndpoint })
@@ -50,9 +51,9 @@ describe("Charges", () => {
                 .once()
                 .reply(201, okResponse, { "Content-Type" : "application/json" })
             const data = {
-                token    : "test",
-                amount   : 1,
-                currency : "usd"
+                transactionTokenId : "test",
+                amount             : 1,
+                currency           : "usd"
             }
 
             return charges.create(data).should.eventually.eql(okResponse)

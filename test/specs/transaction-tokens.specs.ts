@@ -1,9 +1,9 @@
 import "../utils"
 import { expect } from "chai"
-import nock = require("nock")
+import * as nock from "nock"
+import { Scope } from "nock"
 import { RestAPI, ErrorResponse } from "../../src/api/RestAPI"
 import { TransactionTokens } from "../../src/resources/TransactionTokens"
-import { Scope } from "nock"
 import { VALIDATION_ERROR } from "../../src/errors/ErrorsConstants"
 
 describe("Transaction Tokens", () => {
@@ -63,18 +63,6 @@ describe("Transaction Tokens", () => {
                 .reply(200, okResponse, { "Content-Type" : "application/json" })
 
             return tokens.get("1", "1").should.eventually.eql(okResponse)
-        })
-    })
-
-    context("route DELETE /stores/:storeId/tokens/:id", () => {
-        it("should return correct response", () => {
-            const okResponse = { action : "delete" }
-            const okScope = scope
-                .delete(/\/stores\/[a-f-0-9\-]+\/tokens\/[a-f0-9]+$/i)
-                .once()
-                .reply(204, okResponse, { "Content-Type" : "application/json" })
-
-            return tokens.delete("1", "1").should.eventually.eql(okResponse)
         })
     })
 

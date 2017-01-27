@@ -42,6 +42,8 @@ export interface RestAPIStatic extends Function {
     getData(data: any): Array<string>
 }
 
+export type PromiseCreator<A> = () => Promise<A>
+
 export class RestAPI {
 
     public appId: string
@@ -126,12 +128,12 @@ export class RestAPI {
             fetch(request)
                 .then(checkStatus)
                 .then(parseJSON)
-                .then((response: A & IResponse) => RestAPI.handleSuccess(response, resolve, callback))
+                .then((response: A & ResponseInterface) => RestAPI.handleSuccess(response, resolve, callback))
                 .catch((error: Error) => RestAPI.handleError(error, reject, callback))
         })
     }
 
-    public longPolling<A> (promise: () => Promise<A>,
+    public longPolling<A> (promise: PromiseCreator<A>,
                            condition: (response: A) => boolean,
                            callback?: ResponseCallback<A>,
                            interval: number = POLLING_INTERVAL,
@@ -146,22 +148,16 @@ export class RestAPI {
             }, wait))
         }
 
-        function *poll (): IterableIterator<Promise<A>> {
-            while (true) {
-                yield promise()
-            }
-        }
-
-        function polling (generator: IterableIterator<Promise<A>> = poll()): Promise<A> {
+        function polling (creator: PromiseCreator<A> = promise): Promise<A> {
             if (elapsedTime >= timeout) {
                 return Promise.reject(new TimeoutError(timeout))
             }
 
             return pollWait(interval)
-                .then(() => generator.next().value)
+                .then(creator)
                 .then((response: A) => {
                     if (!condition(response)) {
-                        return polling(generator)
+                        return polling(creator)
                     }
                     return response
                 })
