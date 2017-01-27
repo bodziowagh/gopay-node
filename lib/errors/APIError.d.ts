@@ -1,5 +1,5 @@
-import * as ExtendableError from "es6-error";
-export declare class APIError extends ExtendableError {
+import { GenericError } from "./GenericError";
+export declare class APIError extends GenericError {
     status: number;
     response: any;
     constructor(status: number, response?: any, route?: string);

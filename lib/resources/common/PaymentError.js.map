@@ -1,1 +1,1 @@
-{"version":3,"sources":["PaymentError.js"],"names":[],"mappings":"AAAA","file":"PaymentError.js","sourcesContent":["\"use strict\";\n"]}
+{"version":3,"file":"PaymentError.js","sourceRoot":"","sources":["../../../src/resources/common/PaymentError.ts"],"names":[],"mappings":""}

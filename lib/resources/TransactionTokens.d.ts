@@ -1,4 +1,4 @@
-import { ResponseCallback, ErrorResponse, AuthParams } from "../api/RestAPI";
+import { ResponseCallback, AuthParams } from "../api/RestAPI";
 import { CRUDResource } from "./CRUDResource";
 import { ProcessingMode } from "./common/ProcessingMode";
 export interface TransactionTokenCardData {
@@ -58,5 +58,4 @@ export declare class TransactionTokens extends CRUDResource {
     static routeBase: string;
     create(data: TransactionTokenCreateParams, callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken>;
     get(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ResponseTransactionToken>): Promise<ResponseTransactionToken>;
-    delete(storeId: string, id: string, data?: AuthParams, callback?: ResponseCallback<ErrorResponse>): Promise<ErrorResponse>;
 }

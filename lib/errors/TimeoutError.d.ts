@@ -1,5 +1,5 @@
-import * as ExtendableError from "es6-error";
-export declare class TimeoutError extends ExtendableError {
+import { GenericError } from "./GenericError";
+export declare class TimeoutError extends GenericError {
     timeout: number;
     constructor(timeout: number);
 }

@@ -22,6 +22,7 @@ export interface AuthParams {
 export interface RestAPIStatic extends Function {
     getData(data: any): Array<string>;
 }
+export declare type PromiseCreator<A> = () => Promise<A>;
 export declare class RestAPI {
     appId: string;
     secret: string;
@@ -35,5 +36,5 @@ export declare class RestAPI {
     getBody(data: any, payload: boolean): any;
     getHeaders(data?: any, body?: any): Headers;
     send<A>(method: HTTPMethod, url: string, data?: any, callback?: ResponseCallback<A>): Promise<A>;
-    longPolling<A>(promise: () => Promise<A>, condition: (response: A) => boolean, callback?: ResponseCallback<A>, interval?: number, timeout?: number): Promise<A>;
+    longPolling<A>(promise: PromiseCreator<A>, condition: (response: A) => boolean, callback?: ResponseCallback<A>, interval?: number, timeout?: number): Promise<A>;
 }
