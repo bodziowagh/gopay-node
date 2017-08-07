@@ -1,4 +1,4 @@
-import { WithActive, WithUpdatedOn, WithCreatedOn, AmountWithCurrency } from "./Common"
+import { WithCreatedOn, AmountWithCurrency } from "./Common"
 import { CardBrandPercentFeesItem } from "./Configuration"
 import { TransferSchedule } from "./TransferSchedule"
 import { InvoiceChargeFee } from "./Invoice"
@@ -18,7 +18,7 @@ export interface PlatformPaymentDefaults {
     debitEnabled: boolean
 }
 
-export interface PlatformItem extends WithActive, WithUpdatedOn, WithCreatedOn {
+export interface PlatformItem extends WithCreatedOn {
     id: string
     key: string
     name: string
