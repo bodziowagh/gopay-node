@@ -18,7 +18,7 @@ export type ResponsePlatformConfigurationInfo = Readonly<PlatformConfigurationIt
 
 export class PlatformConfiguration extends Resource {
 
-    public get (data?: any, callback?: ResponseCallback<ResponsePlatformConfigurationInfo>): Promise<ResponsePlatformConfigurationInfo> {
+    public get(data?: any, callback?: ResponseCallback<ResponsePlatformConfigurationInfo>): Promise<ResponsePlatformConfigurationInfo> {
         return this.defineRoute("GET", "/platform")(data, callback)
     }
 
