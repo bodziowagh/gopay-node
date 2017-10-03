@@ -16,7 +16,6 @@ import { checkStatus, parseJSON } from "../utils/fetch"
 import { TimeoutError } from "../errors/TimeoutError"
 import { fromError } from "../errors/parser"
 import { stringify as stringifyQuery } from "query-string"
-import uuid = require("uuid/v4")
 
 export type HTTPMethod = "GET" | "POST" | "PATCH" | "DELETE"
 
